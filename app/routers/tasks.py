@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -20,4 +20,13 @@ def create_task(payload: TaskCreate, db: Session = Depends(get_db)):
 def list_tasks(db: Session = Depends(get_db)):
  return db.scalars(select(Task).order_by(Task.id)).all()
 
+
+def get_task_or_404(db: Session, task_id: int) -> Task:
+    task = db.get(Task, task_id)
+    if task is None:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return task
+@router.get("/{task_id}", response_model=TaskRead)
+def get_task(task_id: int, db: Session = Depends(get_db)):
+ return get_task_or_404(db, task_id)
 
