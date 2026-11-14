@@ -1,4 +1,5 @@
 import os
+
 from fastapi import FastAPI
 
 from app import models  # noqa: F401 (registers the Task table)
