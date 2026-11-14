@@ -45,3 +45,10 @@ def test_update_task_not_found(client):
     r = client.patch("/tasks/999", json={"done": True})
     assert r.status_code == 404
 
+# === test 5 ===
+def test_delete_task(client):
+    created = client.post("/tasks", json={"title": "A"}).json()
+    r = client.delete(f"/tasks/{created['id']}")
+    assert r.status_code == 204
+    assert client.get(f"/tasks/{created['id']}").status_code == 404
+
