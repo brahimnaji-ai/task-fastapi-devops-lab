@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models import Task
-from app.schemas import TaskCreate, TaskRead
+from app.schemas import TaskCreate, TaskUpdate, TaskRead
 
 router = APIRouter(prefix="/api/v1/tasks", tags=["tasks"])
 
@@ -29,4 +29,14 @@ def get_task_or_404(db: Session, task_id: int) -> Task:
 @router.get("/{task_id}", response_model=TaskRead)
 def get_task(task_id: int, db: Session = Depends(get_db)):
  return get_task_or_404(db, task_id)
+
+@router.patch("/{task_id}", response_model=TaskRead)
+def update_task(task_id: int, payload: TaskUpdate, db: Session = Depends(get_db)):
+    task = get_task_or_404(db, task_id)
+    for field, value in payload.model_dump(exclude_none=True).items():
+        setattr(task, field, value)
+    db.commit()
+    db.refresh(task)
+    return task
+
 
