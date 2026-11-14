@@ -16,3 +16,8 @@ def create_task(payload: TaskCreate, db: Session = Depends(get_db)):
     db.refresh(task)
     return task
 
+@router.get("", response_model=list[TaskRead])
+def list_tasks(db: Session = Depends(get_db)):
+ return db.scalars(select(Task).order_by(Task.id)).all()
+
+
