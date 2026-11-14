@@ -29,8 +29,19 @@ def test_get_task(client):
     r = client.get(f"/tasks/{created['id']}")
     assert r.status_code == 200
     assert r.json()["title"] == "A"
-    
+
 def test_get_task_not_found(client):
     r = client.get("/tasks/999")
+    assert r.status_code == 404
+
+# === test 4 ===
+def test_update_task(client):
+    created = client.post("/tasks", json={"title": "A"}).json()
+    r = client.patch(f"/tasks/{created['id']}", json={"done": True})
+    assert r.status_code == 200
+    assert r.json()["done"] is True
+    assert r.json()["title"] == "A"
+def test_update_task_not_found(client):
+    r = client.patch("/tasks/999", json={"done": True})
     assert r.status_code == 404
 
