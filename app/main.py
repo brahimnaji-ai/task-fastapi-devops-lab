@@ -1,8 +1,8 @@
+import os
 from fastapi import FastAPI
 
-from app import models # noqa: F401 (registers the Task table)
+from app import models  # noqa: F401 (registers the Task table)
 from app.database import Base, engine
-
 from app.routers import tasks
 
 Base.metadata.create_all(bind=engine)
@@ -12,4 +12,4 @@ app.include_router(tasks.router)
 
 @app.get("/health")
 def health()-> dict:
-    return {"status": "OK"}
+    return {"status": "ok", "version": os.getenv("APP_VERSION", "dev")}
