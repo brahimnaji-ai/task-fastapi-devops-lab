@@ -39,4 +39,10 @@ def update_task(task_id: int, payload: TaskUpdate, db: Session = Depends(get_db)
     db.refresh(task)
     return task
 
+@router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_task(task_id: int, db: Session = Depends(get_db)):
+    task = get_task_or_404(db, task_id)
+    db.delete(task)
+    db.commit()
+
 
